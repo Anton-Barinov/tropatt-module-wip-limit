@@ -1,6 +1,6 @@
 {
     "name": "crm.wip-limit",
-    "version": "1.4.0",
+    "version": "1.4.2",
     "vendor": "crm",
     "author": "Anton Barinov",
     "author_url": "https://github.com/Anton-Barinov",
@@ -15,7 +15,7 @@
     "web_routes": "web/config/routes.php",
     "migrations": "api/migrations/",
     "assets": {
-        "css_routes": {"task-detail": "web/assets/css/module-wip-limit.css"},
+        "css_routes": {"module-wip-limit": "web/assets/css/module-wip-limit.css", "task-detail": "web/assets/css/module-wip-limit.css"},
         "js_routes": {"task-detail": "web/assets/js/wip-task-sidebar.js"}
     },
     "positions": {

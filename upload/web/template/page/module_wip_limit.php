@@ -4,10 +4,10 @@
 <div class="crm-main-wrap"><header class="crm-topbar py-2"><div class="container-fluid"></div></header>
 <main class="crm-content crm-admin-page"><div class="crm-page-head"><div><ol class="breadcrumb mb-1"><li class="breadcrumb-item"><a href="index.php?route=admin" data-i18n="nav.admin"><?= htmlspecialchars($t('nav.admin', 'Administration'), ENT_QUOTES, 'UTF-8') ?></a></li><li class="breadcrumb-item active" data-i18n="module_wip_limit.page_title"><?= htmlspecialchars($t('module_wip_limit.page_title', 'WIP Limits'), ENT_QUOTES, 'UTF-8') ?></li></ol><h1 class="crm-page-title" data-i18n="module_wip_limit.page_title"><?= htmlspecialchars($t('module_wip_limit.page_title', 'WIP Limits'), ENT_QUOTES, 'UTF-8') ?></h1><p class="crm-subtitle" data-i18n="module_wip_limit.subtitle"><?= htmlspecialchars($t('module_wip_limit.subtitle', 'Limit the number of tasks in progress per user, team and project.'), ENT_QUOTES, 'UTF-8') ?></p></div></div>
 
-<div class="btn-group btn-group-sm flex-wrap mb-3" id="wipScopeTabs" role="group" aria-label="WIP scope">
-  <button type="button" class="btn btn-outline-secondary active" data-scope="user" data-i18n="module_wip_limit.tab_users"><?= htmlspecialchars($t('module_wip_limit.tab_users', 'Users'), ENT_QUOTES, 'UTF-8') ?></button>
-  <button type="button" class="btn btn-outline-secondary" data-scope="team" data-i18n="module_wip_limit.tab_teams"><?= htmlspecialchars($t('module_wip_limit.tab_teams', 'Teams'), ENT_QUOTES, 'UTF-8') ?></button>
-  <button type="button" class="btn btn-outline-secondary" data-scope="project" data-i18n="module_wip_limit.tab_projects"><?= htmlspecialchars($t('module_wip_limit.tab_projects', 'Projects'), ENT_QUOTES, 'UTF-8') ?></button>
+<div class="btn-group btn-group-sm flex-wrap mb-3 crm-segmented-filter" id="wipScopeTabs" role="group" aria-label="WIP scope">
+  <button type="button" class="btn btn-sm btn-outline-secondary crm-segmented-filter-btn active" data-scope="user" data-i18n="module_wip_limit.tab_users"><?= htmlspecialchars($t('module_wip_limit.tab_users', 'Users'), ENT_QUOTES, 'UTF-8') ?></button>
+  <button type="button" class="btn btn-sm btn-outline-secondary crm-segmented-filter-btn" data-scope="team" data-i18n="module_wip_limit.tab_teams"><?= htmlspecialchars($t('module_wip_limit.tab_teams', 'Teams'), ENT_QUOTES, 'UTF-8') ?></button>
+  <button type="button" class="btn btn-sm btn-outline-secondary crm-segmented-filter-btn" data-scope="project" data-i18n="module_wip_limit.tab_projects"><?= htmlspecialchars($t('module_wip_limit.tab_projects', 'Projects'), ENT_QUOTES, 'UTF-8') ?></button>
 </div>
 
 <div class="row g-4 mb-4">
@@ -35,7 +35,7 @@
     <div class="crm-card crm-section-card mt-3">
       <div class="crm-section-head"><h2 class="h6 mb-0" data-i18n="module_wip_limit.how_title"><?= htmlspecialchars($t('module_wip_limit.how_title', 'How it works'), ENT_QUOTES, 'UTF-8') ?></h2></div>
       <ul class="mb-0 small">
-        <li><?= htmlspecialchars($t('module_wip_limit.how_item_1', 'The limit is checked when a task moves to'), ENT_QUOTES, 'UTF-8') ?> <code>in_progress</code> <?= htmlspecialchars($t('module_wip_limit.how_item_1_or', 'or'), ENT_QUOTES, 'UTF-8') ?> <code>review</code></li>
+        <li><?= htmlspecialchars($t('module_wip_limit.how_item_1', 'Лимит проверяется при переводе задачи в статус'), ENT_QUOTES, 'UTF-8') ?> <strong><?= htmlspecialchars($t('module_wip_limit.status_in_progress', 'В работе'), ENT_QUOTES, 'UTF-8') ?></strong> <?= htmlspecialchars($t('module_wip_limit.how_item_1_or', 'или'), ENT_QUOTES, 'UTF-8') ?> <strong><?= htmlspecialchars($t('module_wip_limit.status_review', 'На проверке'), ENT_QUOTES, 'UTF-8') ?></strong></li>
         <li data-i18n="module_wip_limit.how_item_2"><?= htmlspecialchars($t('module_wip_limit.how_item_2', 'When a limit is exceeded, the assignee or the team/project manager gets a notification.'), ENT_QUOTES, 'UTF-8') ?></li>
         <li data-i18n="module_wip_limit.how_item_3"><?= htmlspecialchars($t('module_wip_limit.how_item_3', 'Limits can be set per user, per team and per project.'), ENT_QUOTES, 'UTF-8') ?></li>
         <li data-i18n="module_wip_limit.how_item_4"><?= htmlspecialchars($t('module_wip_limit.how_item_4', 'If no limit is set, the default value is used.'), ENT_QUOTES, 'UTF-8') ?></li>
@@ -47,9 +47,9 @@
 
 </main></div></div>
 
-<script>
+<script nonce="<?= $csp_nonce ?>">
 (function () {
-    function apiReady() { return window.CRM && window.CRM.api && typeof window.CRM.api.request === 'function'; }
+    function apiReady() { return window.CRM && window.CRM.api && typeof window.CRM.api.request === 'function' && window.CRM.text && typeof window.CRM.text.escapeHtml === 'function'; }
     function waitForApi(cb) { if (apiReady()) cb(); else setTimeout(function () { waitForApi(cb); }, 200); }
 
     var scope = 'user';
@@ -65,6 +65,13 @@
         team: '<?= htmlspecialchars($t('module_wip_limit.th_team', 'Team'), ENT_QUOTES, 'UTF-8') ?>',
         project: '<?= htmlspecialchars($t('module_wip_limit.th_project', 'Project'), ENT_QUOTES, 'UTF-8') ?>'
     };
+    var columnLabels = {
+        wip: '<?= htmlspecialchars($t('module_wip_limit.th_wip', 'В работе'), ENT_QUOTES, 'UTF-8') ?>',
+        limit: '<?= htmlspecialchars($t('module_wip_limit.th_limit', 'Лимит'), ENT_QUOTES, 'UTF-8') ?>',
+        status: '<?= htmlspecialchars($t('module_wip_limit.th_status', 'Статус'), ENT_QUOTES, 'UTF-8') ?>',
+        actions: '<?= htmlspecialchars($t('module_wip_limit.th_actions', 'Действия'), ENT_QUOTES, 'UTF-8') ?>',
+        edit: '<?= htmlspecialchars($t('module_wip_limit.edit_limit', 'Изменить лимит'), ENT_QUOTES, 'UTF-8') ?>'
+    };
 
     function rowHtml(u) {
         var pct = u.limit_value > 0 ? Math.round(u.current_count / u.limit_value * 100) : 0;
@@ -77,11 +84,11 @@
                 : '<span class="badge bg-success">OK</span>');
         var name = u.full_name || u.login || u.title || '';
         return '<tr class="' + rowClass + '">'
-            + '<td><strong>' + window.CRM.text.escapeHtml(name || ('#' + (u.user_id || u.scope_id))) + '</strong></td>'
-            + '<td><div class="d-flex align-items-center"><div class="progress flex-grow-1 me-2" style="height:6px"><div class="progress-bar ' + barColor + '" style="width:' + pct + '%"></div></div><small>' + u.current_count + '/' + u.limit_value + '</small></div></td>'
-            + '<td>' + u.limit_value + '</td>'
-            + '<td>' + statusBadge + '</td>'
-            + '<td><button class="btn btn-sm crm-btn-muted edit-limit" data-value="' + window.CRM.text.escapeHtml(String(u.user_id != null ? u.user_id : u.public_id)) + '" data-limit="' + u.limit_value + '"><i class="fa-solid fa-pen"></i></button></td>'
+            + '<td data-label="' + window.CRM.text.escapeHtml(headers[scope]) + '"><strong>' + window.CRM.text.escapeHtml(name || ('#' + (u.user_id || u.scope_id))) + '</strong></td>'
+            + '<td data-label="' + window.CRM.text.escapeHtml(columnLabels.wip) + '"><div class="d-flex align-items-center"><div class="progress flex-grow-1 me-2" style="height:6px"><div class="progress-bar ' + barColor + '" style="width:' + pct + '%"></div></div><small>' + u.current_count + '/' + u.limit_value + '</small></div></td>'
+            + '<td data-label="' + window.CRM.text.escapeHtml(columnLabels.limit) + '">' + u.limit_value + '</td>'
+            + '<td data-label="' + window.CRM.text.escapeHtml(columnLabels.status) + '">' + statusBadge + '</td>'
+            + '<td data-label="' + window.CRM.text.escapeHtml(columnLabels.actions) + '"><button type="button" class="btn btn-sm crm-btn-muted edit-limit" aria-label="' + window.CRM.text.escapeHtml(columnLabels.edit) + '" title="' + window.CRM.text.escapeHtml(columnLabels.edit) + '" data-value="' + window.CRM.text.escapeHtml(String(u.user_id != null ? u.user_id : u.public_id)) + '" data-limit="' + u.limit_value + '"><i class="fa-solid fa-pen" aria-hidden="true"></i></button></td>'
             + '</tr>';
     }
 
