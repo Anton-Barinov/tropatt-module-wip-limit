@@ -1,6 +1,6 @@
 # WIP Limit
 
-WIP Limit module for TropaTT CRM
+Ограничение количества задач в работе (Work In Progress). Живой подсчёт WIP-нагрузки по пользователям, командам и проектам, индивидуальные лимиты, контроль превышения и уведомления.
 
 A module for the [TropaTT](https://github.com/Anton-Barinov/TropaTT) self-hosted CRM and work platform.
 
