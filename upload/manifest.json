@@ -1,6 +1,6 @@
 {
     "name": "crm.wip-limit",
-    "version": "1.4.0",
+    "version": "1.4.4",
     "vendor": "crm",
     "author": "Anton Barinov",
     "author_url": "https://github.com/Anton-Barinov",
@@ -10,28 +10,44 @@
     "license": "MIT",
     "category": "productivity",
     "dependencies": [],
-    "require_permissions": [],
+    "require_permissions": [
+        "module.wip-limit.view",
+        "module.wip-limit.manage"
+    ],
     "api_routes": "api/config/routes.php",
     "web_routes": "web/config/routes.php",
     "migrations": "api/migrations/",
     "assets": {
-        "css_routes": {"task-detail": "web/assets/css/module-wip-limit.css"},
-        "js_routes": {"task-detail": "web/assets/js/wip-task-sidebar.js"}
+        "css_routes": {
+            "task-detail": "web/assets/css/module-wip-limit.css",
+            "module-wip-limit": "web/assets/css/module-wip-limit.css"
+        },
+        "js_routes": {
+            "task-detail": "web/assets/js/wip-task-sidebar.js"
+        }
     },
     "positions": {
         "task.detail.sidebar": [
-            {"renderer": "Module\\Crm\\WipLimit\\Position\\TaskSidebarPanel::render", "priority": 10, "key": "wip_limit"}
+            {
+                "renderer": "Module\\Crm\\WipLimit\\Position\\TaskSidebarPanel::render",
+                "priority": 10,
+                "key": "wip_limit"
+            }
         ]
     },
-    "hooks": {},
+    "hooks": [],
     "menu_items": [],
     "service_provider": "Module\\Crm\\WipLimit\\WipLimitServiceProvider",
     "config_defaults": {
         "default_limit": 5,
         "team_default_limit": 10,
         "project_default_limit": 10,
-        "enforce_on_status": ["in_progress", "review"],
+        "enforce_on_status": [
+            "in_progress",
+            "review"
+        ],
         "notify_on_exceed": true,
         "excluded_role_ids": []
-    }
+    },
+    "signature": "83ca6b56ccba0811341f45216a045b8775dcb3201af061a3669e37ea476da7a9"
 }

@@ -1,6 +1,6 @@
 # crm.wip-limit
 
-Ограничение количества задач в работе (Work In Progress) на пользователя, команду и проект. Живой подсчёт WIP-нагрузки, индивидуальные лимиты, контроль превышения и уведомления. Эталонный пример модуля TropaTT (`docs/web/05-modules.md`).
+Ограничение количества задач в работе (Work In Progress) на пользователя, команду и проект. Живой подсчёт WIP-нагрузки, индивидуальные лимиты, контроль превышения и уведомления. Эталонный пример модуля TropaTT (см. [руководство по разработке модулей](../../../MODULE_DEVELOPMENT.md)).
 
 ## Возможности
 
@@ -15,7 +15,9 @@
 
 ## Архитектура
 
-- `manifest.json` — имя `crm.wip-limit`, вендор `crm`, категория `productivity`, версия `1.4.0`.
+- `manifest.json` — имя `crm.wip-limit`, вендор `crm`, категория `productivity`, версия `1.4.3`.
+
+Все API-запросы и счётчики ограничены активным рабочим пространством. Таблицы лимитов получают `organization_id` миграцией `004_workspace_scope.sql`: старые пользовательские лимиты назначаются только пользователям ровно с одним рабочим пространством, а лимиты команд и проектов наследуют пространство самой команды/проекта. Неоднозначные и бесхозные записи остаются без пространства и не показываются пользователям (fail closed). Откат сначала проверяет возможность безопасно убрать workspace-область глобальными уникальными индексами; при конфликтующих лимитах из разных пространств откат прекращается до изменения схемы. Просмотр и управление разделены правами `module.wip-limit.view` и `module.wip-limit.manage`.
 - `api/Service/WipLimitService.php` — живой движок подсчёта WIP по пользователям/командам/проектам.
 - `api/Service/WipNotifier.php` — уведомления о превышении через ядерный `ModuleNotificationDispatcher`.
 - `api/Hook/WipHook.php` + `api/WipLimitServiceProvider.php` — регистрация хуков на `task.status_changed` / `task.assignee_changed` через ядерный `HookManager` (`boot()`).
@@ -27,7 +29,7 @@
 
 ## Миграции и тестирование
 
-Проверки: `php -l` всех PHP-файлов модуля, `node --check web/assets/js/module-wip-limit.js`, `php upload/api/scripts/module.php check crm.wip-limit`.
+Проверки: `php -l` всех PHP-файлов модуля, `node --check web/assets/js/module-wip-limit.js` и `node --check web/assets/js/wip-task-sidebar.js`, `php upload/api/scripts/module.php check crm.wip-limit`. Страница настроек передаёт CSP nonce встроенному скрипту; пакет без nonce блокируется политикой безопасности и оставляет таблицу в состоянии «Загрузка…».
 
 ## Безопасность
 
